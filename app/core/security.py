@@ -63,3 +63,21 @@ class TokenBlacklist:
 
     def is_blacklisted(self, jti: str) -> bool:
         return jti in self._blacklist
+
+token_blacklist = TokenBlacklist()
+
+def create_refresh_token() -> str:
+    """Create a secure refresh token."""
+    return secrets.token_urlsafe(32)
+
+
+def create_tokens(user_data: dict) -> tuple[str, str]:
+    """Create both access and refresh tokens."""
+    jti = secrets.token_urlsafe(8)
+    access_token = create_access_token(
+        data={**user_data, "jti": jti},
+        expires_delta= timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+
+    refresh_token = create_refresh_token()
+    return access_token, refresh_token
