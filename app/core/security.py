@@ -81,3 +81,13 @@ def create_tokens(user_data: dict) -> tuple[str, str]:
 
     refresh_token = create_refresh_token()
     return access_token, refresh_token
+
+def verify_token(token: str) -> dict:
+    """Verify a token and check if it's blacklisted."""
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        if token_blacklist.is_blacklisted(payload.get("jti", "")):
+            raise TokenExpiredError("Token has been revoked")
+        return payload
+    except JWTError:
+        raise InvalidCredentialsError("Invalid token")
