@@ -1,4 +1,4 @@
-class UserAlreadyExists(Exception):
+class UserAlreadyExistsError(Exception):
     """Exception raised when a user with the same email or mobile number already exists."""
 
     def __init__(self, detail: str = "User already exists"):
