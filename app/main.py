@@ -20,4 +20,19 @@ from app.core.exceptions import (
     TokenExpiredError,
     UserAlreadyExistsError,
 )
-from app.core.middleware import
+from app.core.middleware import RequestLoggingMiddleware
+
+logger = logging.getLogger(__name__)
+
+# Configure logging for production
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+app = FastAPI(
+    title="Backend API Learning",
+    docs_url='/docs',
+    redoc_url='/redoc',
+)
+
+app.include_router(users.router,
+                   prefix=f"{settings.API_V1_STR}/users",
+                   tags=["users"])
