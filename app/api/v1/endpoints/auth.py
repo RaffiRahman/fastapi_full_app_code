@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.functions import current_user
 
 from app.core.database import get_db
 from app.core.exceptions import TokenExpiredError
@@ -111,3 +112,73 @@ def reset_password(
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+@router.post("/change-password")
+def change_password(
+        password_data: schemas_user.UserPasswordReset,
+        current_user: models_user.User = Depends(get_current_active_user),
+        db: Session = Depends(get_db),
+):
+    """Change the current user's password."""
+    if not verify_password(password_data.current_password, str(current_user.hashed_password)):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid current password")
+    try:
+        validate_password_complexity(password_data.new_password)
+        crud.update_user(
+            db,
+            db_user=current_user,
+            user_in=schemas_user.UserUpdate(email=str(current_user.email), password=password_data.new_password),
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    return {"message": "Password updated successful"}
+
+@router.get("/profile", response_model=schemas_user.User)
+async def read_user_profile(
+        curreent_user: models_user.User = Depends(get_current_active_user),
+):
+    """Retrieve the current user's profile."""
+    return current_user
+
+@router.put("/profile", response_model=schemas_user.User)
+def update_user_profile(
+        user_in: schemas_user.UserUpdate,
+        db: Session = Depends(get_db),
+        current_user: models_user.User = Depends(get_current_active_user),
+):
+    """Update current authenticated user's profile."""
+    user = crud.update_user(db, db_user=current_user, user_in=user_in)
+    return user
+
+@router.post("/token/refresh", response_model=schemas_user.Token)
+async def refresh_access_token(
+        refresh_date: schemas_user.RefreshTokenRequest,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        db: Session = Depends(get_db),
+        current_user: models_user.User = Depends(get_current_active_user)
+):
+    """Refresh the access token for an authenticated user."""
+    if refresh_date.refresh_token != str(current_user.refresh_token):
+        raise TokenExpiredError("Unable to refresh token.")
+
+    access_token, refresh_token = create_tokens(
+        {"sub": current_user.email, "roles": current_user.roles, "is_superuser": current_user.is_superuser}
+    )
+    current_user.refresh_token = refresh_token   # type: ignore[assignment]
+    db.add(current_user)
+    db.commit()
+    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+
+@router.post("/logout")
+async def logout(
+        token: Annotated[str, Depends(reusable_oauth2)],
+        db: Session = Depends(get_db),
+        current_user: models_user.User = Depends(get_current_active_user)
+):
+    """Revoke the current user's tokens."""
+    payload = verify_token(token)
+    exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    token_blacklist.add_to_blacklist(payload.get("jti", ""), exp)
+    current_user.refresh_token = None   # type: ignore[assignment]
+    db.add(current_user)
+    db.commit()
+    return {"message": "Logout successful"}

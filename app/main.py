@@ -11,7 +11,8 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.endpoints import (
-    users
+    auth,
+    users,
 )
 from app.core.config import settings
 from app.core.exceptions import (
@@ -34,5 +35,8 @@ app = FastAPI(
 )
 
 app.include_router(users.router,
+                   prefix=f"{settings.API_V1_STR}/users",
+                   tags=["users"])
+app.include_router(auth.router,
                    prefix=f"{settings.API_V1_STR}/users",
                    tags=["users"])
