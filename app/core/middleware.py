@@ -8,7 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.types import ASGIApp
 
 # Configure logging
-logging.bacisConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(meaasge)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(meaasge)s")
 logger = logging.getLogger(__name__)
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):

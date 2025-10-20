@@ -38,5 +38,5 @@ app.include_router(users.router,
                    prefix=f"{settings.API_V1_STR}/users",
                    tags=["users"])
 app.include_router(auth.router,
-                   prefix=f"{settings.API_V1_STR}/users",
-                   tags=["users"])
+                   prefix=f"{settings.API_V1_STR}/auth",
+                   tags=["auth"])
