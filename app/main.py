@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.v1.endpoints import (
     auth,
     users,
+    cms,
 )
 from app.core.config import settings
 from app.core.exceptions import (
@@ -40,3 +41,6 @@ app.include_router(users.router,
 app.include_router(auth.router,
                    prefix=f"{settings.API_V1_STR}/auth",
                    tags=["auth"])
+app.include_router(cms.router,
+                   prefix=settings.API_V1_STR,
+                   tags=["cms"])

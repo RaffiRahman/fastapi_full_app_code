@@ -38,3 +38,17 @@ def read_menu(location_slug: str, db: Session = Depends(get_db)):
             children=[build_tree(child) for child in children],
         )
     return schemas.Menu(name=str(menu.name), items=[build_tree(i) for i in items])
+
+@router.get("/pages/{slug", response_model=schemas.Page)
+def read_page(slug: str, db: Session = Depends(get_db)):
+    """Retrieve a single page by slug."""
+    page = db.query(Page).filter(Page.slug == slug).first()
+    if not page:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return page
+
+@router.get("/site-settings", response_model=dict)
+def read_site_settings(db: Session = Depends(get_db)):
+    """Retrieve all site settings as key-value pairs."""
+    settings = db.query(SiteSetting).all()
+    return {s.key: s.value for s in settings}

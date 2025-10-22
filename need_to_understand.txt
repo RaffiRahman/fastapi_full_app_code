@@ -1,0 +1,11 @@
+-> cms.py
+schemas.product.py:
+    -> class ProductCreate(ProductBase)---------> why pass?
+models.product.py:
+    -> # Association table for products and categories
+    -> # Association table for products and tags
+    -> connections between tables
+crud.crud_product:
+    -> models.Product---------> Cannot find reference 'Product' in '__init__.py'
+    -> def create_product()
+
