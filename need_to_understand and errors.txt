@@ -8,4 +8,15 @@ models.product.py:
 crud.crud_product:
     -> models.Product---------> Cannot find reference 'Product' in '__init__.py'
     -> def create_product()
+    -> def update_product()
 
+
+
+
+
+
+
+
+
+ERRORS:
+-> Internal Server Error
