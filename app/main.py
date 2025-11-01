@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.endpoints import (
+    articles,
     auth,
     users,
     cms,
@@ -48,3 +49,4 @@ app.include_router(cms.router,
 app.include_router(products.router,
                    prefix=f"{settings.API_V1_STR}/products",
                    tags=["products"])
+
