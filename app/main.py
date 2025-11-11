@@ -49,4 +49,7 @@ app.include_router(cms.router,
 app.include_router(products.router,
                    prefix=f"{settings.API_V1_STR}/products",
                    tags=["products"])
+app.include_router(articles.router,
+                   prefix=f"{settings.API_V1_STR}/articles",
+                   tags=["articles"])
 
