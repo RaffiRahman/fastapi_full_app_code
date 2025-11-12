@@ -13,9 +13,11 @@ from fastapi.staticfiles import StaticFiles
 from app.api.v1.endpoints import (
     articles,
     auth,
-    users,
+    categories,
     cms,
     products,
+    tags,
+    users,
 )
 from app.core.config import settings
 from app.core.exceptions import (
@@ -52,4 +54,8 @@ app.include_router(products.router,
 app.include_router(articles.router,
                    prefix=f"{settings.API_V1_STR}/articles",
                    tags=["articles"])
+app.include_router(categories.router,
+                   prefix=f"{settings.API_V1_STR}/categories",
+                   tags=["categories"])
+
 

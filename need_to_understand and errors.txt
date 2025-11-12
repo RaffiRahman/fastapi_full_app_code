@@ -3,6 +3,8 @@ schemas.product.py:
     -> class ProductCreate(ProductBase)---------> why pass?
 schemas.article.py:
     -> class ArticleCreate(ArticleBase)---------> why pass?
+schemas.category.py:
+    -> class CategoryCreate(CategoryBase)--------> why pass?
 models.product.py:
     -> # Association table for products and categories
     -> # Association table for products and tags
