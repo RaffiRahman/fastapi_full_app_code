@@ -17,6 +17,7 @@ from app.api.v1.endpoints import (
     cms,
     products,
     tags,
+    tools,
     users,
 )
 from app.core.config import settings
@@ -57,5 +58,8 @@ app.include_router(articles.router,
 app.include_router(categories.router,
                    prefix=f"{settings.API_V1_STR}/categories",
                    tags=["categories"])
+app.include_router(tags.router,
+                   prefix=f"{settings.API_V1_STR}/tags",
+                   tags=["tags"])
 
 
