@@ -16,6 +16,7 @@ from app.api.v1.endpoints import (
     carts,
     categories,
     cms,
+    payments,
     products,
     reviews,
     tags,
@@ -69,6 +70,9 @@ app.include_router(tools.router,
 app.include_router(carts.router,
                    prefix=f"{settings.API_V1_STR}/carts",
                    tags=["carts"])
+app.include_router(reviews.router,
+                   prefix=f"{settings.API_V1_STR}/reviews",
+                   tags=["reviews"])
 
 
 
