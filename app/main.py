@@ -21,6 +21,7 @@ from app.api.v1.endpoints import (
     reviews,
     tags,
     tools,
+    uploads,
     users,
 )
 from app.core.config import settings
@@ -73,6 +74,18 @@ app.include_router(carts.router,
 app.include_router(reviews.router,
                    prefix=f"{settings.API_V1_STR}/reviews",
                    tags=["reviews"])
+app.include_router(payments.router,
+                   prefix=f"{settings.API_V1_STR}/payments",
+                   tags=["payments"])
+app.include_router(uploads.router,
+                   prefix=f"{settings.API_V1_STR}/uploads",
+                   tags=["uploads"])
+
+# Serve uploaded files
+upload_path = Path(settings.UPLOAD_DIR)
+upload_path.mkdir(parents=True, exist_ok=True)
+upload_path.chmod(0o755)
+app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
 
